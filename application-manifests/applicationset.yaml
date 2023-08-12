@@ -18,7 +18,7 @@ spec:
       source:
         repoURL: https://github.com/Maverickme222222/istio-application-manifest.git
         targetRevision: HEAD
-        path: 'application-definitions/{{environment}}'
+        path: 'application-definitions/{{environment}}/{{application}}'
       destination:
         server: https://kubernetes.default.svc
         namespace: argocd

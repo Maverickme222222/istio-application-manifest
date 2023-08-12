@@ -11,7 +11,5 @@
     "exclude": "",
     "include": "",
     "environment": "dev",
-    "applications": {
-        "name" : "emails"
-    }
+    "application": "nginx"
   }
