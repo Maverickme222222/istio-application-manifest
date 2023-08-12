@@ -21,4 +21,4 @@ spec:
         path: 'application-definitions/{{environment}}/{{application}}'
       destination:
         server: https://kubernetes.default.svc
-        namespace: argocd
+        namespace: default
