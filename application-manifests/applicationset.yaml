@@ -16,7 +16,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: https://github.com/Maverickme222222/istio-argo-workfklow.git
+        repoURL: https://github.com/Maverickme222222/istio-application-manifest.git
         targetRevision: HEAD
         path: 'application-definitions/{{environment}}'
       destination:
