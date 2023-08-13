@@ -29,7 +29,7 @@ spec:
         path: 'application-definitions/{{ .environment }}/{{.name}}'
         helm:
           valueFiles:
-            - ../../values/{{ .environment }}/{{.name}}/values.yaml
+            - ../../application-definitions/values/{{ .environment }}/{{.name}}/values.yaml
       destination:
         server: https://kubernetes.default.svc
         namespace: default
