@@ -4,6 +4,7 @@ metadata:
   name: applications
   namespace: argocd
 spec:
+  goTemplate: true
   generators:
     - matrix:
         generators:
