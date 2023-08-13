@@ -20,8 +20,8 @@ spec:
               - path: application-manifests/dev/applications.yaml
           # cluster generator, 'child' #2
           - list:
-            elements: []
-            elementsYaml: "{{ .key.components | toJson }}"
+              elements: []
+              elementsYaml: "{{ .key.components | toJson }}"
   template:
     metadata:
       name: '{{appName}}-{{.name}}'
