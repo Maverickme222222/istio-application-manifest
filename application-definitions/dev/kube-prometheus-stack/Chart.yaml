@@ -7,7 +7,7 @@
 # so in time we may be able to refactor here. Values are passed straight
 # through to the subchart.
 apiVersion: v2
-name: external-kube-prometheus-stack
+name: kube-prometheus-stack
 description: A Helm chart for Kubernetes
 
 # A chart can be either an 'application' or a 'library' chart.

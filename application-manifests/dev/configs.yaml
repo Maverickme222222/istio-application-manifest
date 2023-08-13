@@ -1,6 +1,6 @@
 environment: dev
 services:
   components:
-    - name: external-kube-prometheus-stack
+    - name: kube-prometheus-stack
       version: "6.3.2"
       destnamespace: prometheus
