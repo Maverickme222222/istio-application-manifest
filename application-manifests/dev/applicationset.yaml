@@ -12,7 +12,7 @@ spec:
               repoURL: https://github.com/Maverickme222222/istio-application-manifest.git
               revision: HEAD
               files:
-              - path: application-manifests/dev/applicationset.yaml
+              - path: application-manifests/dev/configs.yaml
           # cluster generator, 'child' #2
           - list:
               elements: []
