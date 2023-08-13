@@ -1,5 +1,5 @@
 environment: dev
-key:
+services:
   components:
     - name: nginx
       chart: podinfo

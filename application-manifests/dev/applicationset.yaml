@@ -17,7 +17,7 @@ spec:
           # cluster generator, 'child' #2
           - list:
               elements: []
-              elementsYaml: "{{ .key.components | toJson }}"
+              elementsYaml: "{{ .services.components | toJson }}"
   template:
     metadata:
       name: 'test-{{.name}}'
