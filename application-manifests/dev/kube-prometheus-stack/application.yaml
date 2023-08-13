@@ -9,10 +9,13 @@ spec:
     repoURL: https://prometheus-community.github.io/helm-charts
     targetRevision: 48.3.1
     chart: kube-prometheus-stack
+    helm:
+      valueFiles:
+        - ../../../application-definitions/values/dev/kube-prometheus-stack/values.yaml
   syncPolicy:
     syncOptions:
     - ServerSideApply=true
     - CreateNamespace=true
-destination:
-  server: https://kubernetes.default.svc
-  namespace: prometheus
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: prometheus
