@@ -16,7 +16,7 @@ spec:
           # cluster generator, 'child' #2
           - list:
               elements:
-                - cluster: engineering-dev
+                - service: nginx
                   url: https://kubernetes.default.svc
   template:
     metadata:
@@ -26,7 +26,7 @@ spec:
       source:
         repoURL: https://github.com/Maverickme222222/istio-application-manifest.git
         targetRevision: HEAD
-        path: 'application-definitions/{{environment}}/{{application}}'
+        path: 'application-definitions/{{environment}}/{{service}}'
       destination:
         server: '{{url}}'
         namespace: default

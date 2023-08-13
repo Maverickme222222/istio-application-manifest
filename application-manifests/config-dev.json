@@ -10,6 +10,5 @@
     "annotations": null,
     "exclude": "",
     "include": "",
-    "environment": "dev",
-    "application": "nginx"
+    "environment": "dev"
   }
