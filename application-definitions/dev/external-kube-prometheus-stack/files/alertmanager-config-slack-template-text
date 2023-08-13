@@ -1,0 +1,4 @@
+{{ range .Alerts }}
+  {{- if .Annotations.summary }}{{ "\n" }}*Summary:* {{ .Annotations.summary }} {{- end }}
+  {{- if .Annotations.description }}{{ "\n" }}*Description:* {{ .Annotations.description }}{{- end }}
+{{ end }}

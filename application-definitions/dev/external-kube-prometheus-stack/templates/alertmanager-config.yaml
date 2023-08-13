@@ -1,0 +1,89 @@
+# We keep our alertmanager configuration in a separate K8S object to allow easy
+# mutation on a live system. ArgoCD will render and push this file straight to
+# K8S without needing to re-render the subchart; the Prometheus operator will
+# pick up changes to this object and HUP the running AlertManager
+#
+# WARNING: Here be dragons!
+# Be careful of formatting - the Kubernetes fields are named slightly
+# differently than those in the native AlertManager configuration and it is
+# possible to crash the AlertManager with mal-formed config. It's worth
+# verifying with a test alert after any changes to avoid monitoring outages.
+
+# Note to future Kappa engineers - the v1alpha spec is subject to change and
+# this may need refactoring at some point.
+#
+# Ref: https://prometheus-operator.dev/docs/operator/api/#monitoring.coreos.com/v1alpha1.AlertmanagerConfig
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: global-alertmanager-configuration
+  namespace: {{ .Values.monitoring.namespace }}
+spec:
+  route:
+    groupBy: ['alertname']
+    groupWait: 30s
+    groupInterval: 5m
+    repeatInterval: 12h
+    receiver: 'slack'
+
+    # Error/Critical errors will push to Pagerduty. All errorlevels will push
+    # to Slack. Note the 'continue' block in the PagerDuty stanza.
+    # Watchdog alerts are auto-generated periodically by AlertManager. We route
+    # them to a null receiver for now, but in the future we can connect this to
+    # a dead man's switch of some kind.
+    # Warning: pay attention to spec, see note above.
+    routes:
+      - receiver: 'null'
+        matchers:
+          - name: "alertName"
+            value: "Watchdog"
+            matchType: "="
+      - receiver: 'pagerduty'
+        groupBy: ['alertname']
+        groupWait: 30s
+        groupInterval: 5m
+        repeatInterval: 12h
+        matchers:
+          - name: severity
+            value: "error|critical"
+            matchType: "=~"
+        continue: true
+      - receiver: 'slack'
+        groupBy: ['alertname']
+        groupWait: 30s
+        groupInterval: 5m
+        repeatInterval: 12h
+
+  receivers:
+    # Documentation:
+    # https://prometheus-operator.dev/docs/operator/api/#monitoring.coreos.com/v1alpha1.SlackConfig
+    - name: 'slack'
+      slackConfigs:
+        - apiURL:
+            name: alertmanager-{{ .Values.env }}-slackapi
+            key: apiURL
+          sendResolved: true
+          iconEmoji: ":prometheus:"
+          mrkdwnIn: ["text"]
+
+          # These pieces of config contain go templating for Prometheus, so we
+          # include them as files to bypass the Helm templating engine
+          fallback: |
+            {{- .Files.Get "files/alertmanager-config-slack-template-fallback" | nindent 12 }}
+          title: |
+            {{- .Files.Get "files/alertmanager-config-slack-template-title" | nindent 12 }}
+          text: |
+            {{- .Files.Get "files/alertmanager-config-slack-template-text" | nindent 12 }}
+
+    # Documentation:
+    # https://prometheus-operator.dev/docs/operator/api/#monitoring.coreos.com/v1alpha1.PagerDutyConfig
+    - name: 'pagerduty'
+      pagerdutyConfigs:
+        - sendResolved: true
+          routingKey:
+            name: alertmanager-{{ .Values.env }}-pagerdutyapi
+            key: routingKey
+          description: |
+            {{ .Files.Get "files/alertmanager-config-pagerduty-template-description" }}
+    # Null receiver doesn't do anything, designed to blackhole watchdog alerts (see above)
+    - name: 'null'

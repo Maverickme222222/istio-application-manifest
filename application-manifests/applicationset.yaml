@@ -13,22 +13,24 @@ spec:
               revision: HEAD
               files:
               - path: "application-manifests/config-dev.json"
+          - git:
+              repoURL: https://github.com/Maverickme222222/istio-application-manifest.git
+              revision: HEAD
+              files:
+              - path: application-manifests/dev/applications.yaml
           # cluster generator, 'child' #2
           - list:
-              elements:
-                - service: nginx
-                  url: https://kubernetes.default.svc
-                - service: nginx-new
-                  url: https://kubernetes.default.svc
+            elements: []
+            elementsYaml: "{{ .key.components | toJson }}"
   template:
     metadata:
-      name: '{{appName}}-{{service}}'
+      name: '{{appName}}-{{.name}}'
     spec:
       project: default
       source:
         repoURL: https://github.com/Maverickme222222/istio-application-manifest.git
         targetRevision: HEAD
-        path: 'application-definitions/{{environment}}/{{service}}'
+        path: 'application-definitions/{{environment}}/{{.name}}'
       destination:
         server: '{{url}}'
         namespace: default

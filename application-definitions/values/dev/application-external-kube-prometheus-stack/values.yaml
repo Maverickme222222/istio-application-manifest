@@ -1,0 +1,155 @@
+# Begin monitoring configuration. Here we can define monitoring artefacts such
+# as Grafana Dashboards, Alerts, ServiceMonitors, and so-forth. Note that we
+# want this configuration to live with the app being monitored - we don't
+# expect monitoring info here for other Kappa apps.
+monitoring:
+  release: external-kube-prometheus-stack
+  namespace: prometheus
+  # See templates/grafana-dashboard
+  # For each item listed here the template will look for
+  # 'files/grafana-dashboard-$name' and upload it into K8s configMap of the same
+  # name
+  grafanaDashboards:
+  - grpc
+  - restarting-pods
+
+  # These values get rendered by the associated alerting template into
+  # PrometheusRules objects, which are what Prometheus uses to determine
+  # alerting configuration. See README.md for more information.
+  prometheusAlerts:
+      - alert: PodRestarts
+        annotations:
+          message: |
+            This is a test alert to see if "{{ $labels.job }}" we can alert on pod restarts. Current value ({{ $value }}).
+        expr: |
+          increase(kube_pod_container_status_restarts_total{pod="psobey-test-pod"}[10m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+
+# Here are the values to be passed into the kube-prometheus-stack chart.  Note
+# that the values here are directly passed through to the subchart sourced from
+# the Prometheus repo which does the real work.  See
+# https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+# for reference.  If copy/pasting values, note that you'll need to indent by
+# one block compared to the values in that file due to the subchart nesting.
+# Note for the record - this values file corresponds to kube-prometheus-stack
+# chart verion 39.5.0. The reference for this is here:
+# https://github.com/prometheus-community/helm-charts/tree/24e36b5d3ab440126586c424b454c8d93685f547/charts/kube-prometheus-stack
+kube-prometheus-stack:
+  enabled: true
+  namespaceOverride: prometheus
+  fullnameOverride: kappa-prometheus
+
+  # defaultRules cover the default Prometheus alerting rules that ship with the
+  # chart. We want most of those, but since our EKS clusters are managed and do
+  # not expose their control planes, remove the rules which will never return
+  # success. This also includes the kubeProxy which is shipped with metrics
+  # bound to localhost in recent versions of Kubernetes.  Our EKS servers do
+  # not expose their control plane, API, or kubelet metrics.  Remove default
+  # rules to avoid Prometheus alerts.
+  defaultRules:
+    create: true
+    rules:
+      etcd: false
+      kubeControllerManager: false
+      kubeProxy: false
+
+  # Begin alert manager configuration here
+  # Nb ingress hostnames are specified in 'environment-variables' since they
+  # are env specific
+  alertmanager:
+    # Note we configure AlertMgr via an AlertmanagerConfiguration - see
+    # templates dir
+    alertmanagerSpec:
+      alertmanagerConfiguration:
+        name: global-alertmanager-configuration
+      logLevel: info
+      # Note: counter-intuitively, this attribute is called 'storage' for
+      # alertmanager, and 'storageSpec' for prometheus (below). Spec for
+      # reference:
+      # https://github.com/prometheus-community/helm-charts/blob/24e36b5d3ab440126586c424b454c8d93685f547/charts/kube-prometheus-stack/values.yaml#L546C16-L546C16
+      storage:
+        volumeClaimTemplate:
+          spec:
+            storageClassName: gp2
+            resources:
+              requests:
+                storage: 10Gi
+    ingress:
+      enabled: true
+      ingressClassName: alb
+      hosts:
+        - alertmanager.dev.kappapay.com
+      paths:
+        - /
+      # Note pathType - this *must* be set to Prefix
+      pathType: Prefix
+      annotations:
+        alb.ingress.kubernetes.io/scheme: internal
+        alb.ingress.kubernetes.io/target-type: 'ip'
+        alb.ingress.kubernetes.io/tags: "Environment=dev,ManagedBy=argocd"
+
+  # Begin Grafana configuration here
+  # Nb ingress hostnames are specified in 'environment-variables' since they
+  # are env specific
+  grafana:
+    ingress:
+      enabled: true
+      ingressClassName: alb
+      hosts:
+        - grafana.dev.kappapay.com
+      # Note pathType - this *must* be set to Prefix
+      pathType: Prefix
+      annotations:
+        alb.ingress.kubernetes.io/scheme: internal
+        alb.ingress.kubernetes.io/target-type: 'ip'
+        alb.ingress.kubernetes.io/tags: "Environment=dev,ManagedBy=argocd"
+
+  # The EKS etcd is not accessible from worker nodes
+  kubeEtcd:
+    enabled: false
+
+  # The EKS control plane is not accessible from worker nodes
+  kubeControllerManager:
+    enabled: false
+
+  # KubeProxy instances listen on localhost for metrics by default
+  kubeProxy:
+    enabled: false
+
+  # The EKS control plane is not accessible from worker nodes
+  kubeScheduler:
+    enabled: false
+
+  # Nb ingress hostnames are specified in 'environment-variables' since they
+  # are env specific
+  prometheus:
+    ingress:
+      enabled: true
+      ingressClassName: alb
+      hosts:
+        - prometheus.dev.kappapay.com
+      # Note pathType - this *must* be set to Prefix
+      pathType: Prefix
+      annotations:
+        alb.ingress.kubernetes.io/scheme: internal
+        alb.ingress.kubernetes.io/target-type: 'ip'
+        alb.ingress.kubernetes.io/tags: "Environment=dev,ManagedBy=argocd"
+
+    prometheusSpec:
+      # We define storage here. Note that at the time of writing online resize
+      # for statefulSet PVCs isn't supported - manual action will be required
+      # if we want to raise this number in the future so let's not lowball it
+      # See https://prometheus-operator.dev/docs/operator/storage/#resizing-volumes
+      # Also https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/storage.md
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            storageClassName: gp2
+            resources:
+              requests:
+                storage: 20Gi
+
+
+
