@@ -3,4 +3,4 @@ services:
   components:
     - name: external-kube-prometheus-stack
       version: "6.3.2"
-      namespace: prometheus
+      destnamespace: prometheus
