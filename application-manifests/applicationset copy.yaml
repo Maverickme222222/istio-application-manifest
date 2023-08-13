@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: applications
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/Maverickme222222/istio-application-manifest.git
+        revision: HEAD
+        files:
+        - path: "application-manifests/config-dev.json"
+  template:
+    metadata:
+      name: '{{appName}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/Maverickme222222/istio-application-manifest.git
+        targetRevision: HEAD
+        path: 'application-definitions/{{environment}}/{{application}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: default
