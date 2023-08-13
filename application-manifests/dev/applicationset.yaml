@@ -26,7 +26,7 @@ spec:
       source:
         repoURL: https://github.com/Maverickme222222/istio-application-manifest.git
         targetRevision: HEAD
-        path: 'application-definitions/dev/{{.name}}'
+        path: 'application-definitions/{{ .environment }}/{{.name}}'
       destination:
         server: https://kubernetes.default.svc
         namespace: default
