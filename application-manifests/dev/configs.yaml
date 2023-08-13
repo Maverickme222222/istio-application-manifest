@@ -1,15 +1,6 @@
 environment: dev
 services:
   components:
-    - name: nginx
-      chart: podinfo
+    - name: external-kube-prometheus-stack
       version: "6.3.2"
-      releaseName: component1
-      repoUrl: "https://stefanprodan.github.io/podinfo"
-      namespace: component1
-    - name: component2
-      chart: podinfo
-      version: "6.3.3"
-      releaseName: component2
-      repoUrl: "ghcr.io/stefanprodan/charts"
-      namespace: component2
+      namespace: default

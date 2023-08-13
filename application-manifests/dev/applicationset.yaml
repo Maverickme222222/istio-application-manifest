@@ -20,13 +20,16 @@ spec:
               elementsYaml: "{{ .services.components | toJson }}"
   template:
     metadata:
-      name: 'test-{{.name}}'
+      name: 'dev-app-{{.name}}'
     spec:
       project: default
       source:
         repoURL: https://github.com/Maverickme222222/istio-application-manifest.git
         targetRevision: HEAD
         path: 'application-definitions/{{ .environment }}/{{.name}}'
+        helm:
+          valueFiles:
+            - application-definitions/values/{{ .environment }}/{{.name}}/values.yaml
       destination:
         server: https://kubernetes.default.svc
         namespace: default
