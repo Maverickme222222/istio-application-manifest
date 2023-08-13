@@ -16,16 +16,16 @@ spec:
           # cluster generator, 'child' #2
           - list:
               elements: []
-              elementsYaml: '{{ .services.components | toJson }}'
+              elementsYaml: "{{ .key.components | toJson }}"
   template:
     metadata:
-      name: '{{appName}}-{{.name}}'
+      name: 'test-{{.name}}'
     spec:
       project: default
       source:
         repoURL: https://github.com/Maverickme222222/istio-application-manifest.git
         targetRevision: HEAD
-        path: 'application-definitions/{{environment}}/{{.name}}'
+        path: 'application-definitions/dev/{{.name}}'
       destination:
-        server: '{{url}}'
+        server: https://kubernetes.default.svc
         namespace: default
