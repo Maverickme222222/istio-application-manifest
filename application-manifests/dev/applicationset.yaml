@@ -29,10 +29,10 @@ spec:
         path: 'application-definitions/{{ .environment }}/{{.name}}'
         helm:
           valueFiles:
-            - ../../values/{{ .environment }}/{{.name}}/values.yaml
+            - ../../values/{{ .environment }}/{{ .name }}/values.yaml
       destination:
         server: https://kubernetes.default.svc
-        namespace: {{ .destnamespace }}
+        namespace: '{{ .destnamespace }}'
       syncPolicy:
         # Override sync policy to ensure ArgoCD can handle the very large CRD files
         # in the kube-prometheus-stack chart. See
