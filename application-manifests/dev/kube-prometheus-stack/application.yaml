@@ -11,7 +11,7 @@ spec:
     chart: kube-prometheus-stack
     helm:
       valueFiles:
-        - ../../../application-definitions/values/dev/kube-prometheus-stack/values.yaml
+        - values.yaml
   syncPolicy:
     syncOptions:
     - ServerSideApply=true
