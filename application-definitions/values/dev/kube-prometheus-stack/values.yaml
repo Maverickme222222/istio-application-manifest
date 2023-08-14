@@ -1,4 +1,4 @@
-kube-prometheus-stack:
-  prometheus:
-    ingress:
-      enabled: true
+defaultRules:
+  create: true
+  rules:
+    alertmanager: true
