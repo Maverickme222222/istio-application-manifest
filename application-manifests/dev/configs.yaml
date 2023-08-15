@@ -4,3 +4,6 @@ services:
     - name: external-kyverno
       version: "3.0.5"
       destnamespace: kyverno
+    - name: nginx
+      version: "3.0.5"
+      destnamespace: default

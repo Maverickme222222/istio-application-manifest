@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-with-init
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-with-init
+  template:
+    metadata:
+      labels:
+        app: nginx-with-init
+    spec:
+      initContainers:
+        - name: init-container
+          image: busybox
+          command: ['sh', '-c', 'echo "Initializing..." && sleep 5']
+      containers:
+        - name: nginx-container
+          image: nginx
+          ports:
+            - containerPort: 80
