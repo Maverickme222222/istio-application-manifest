@@ -1,12 +1,6 @@
 environment: dev
 services:
   components:
-    - name: kube-prometheus-stack
-      version: "6.3.2"
-      destnamespace: prometheus
     - name: external-kyverno
       version: "3.0.5"
       destnamespace: kyverno
-    - name: external-istio
-      version: "3.0.5"
-      destnamespace: istio-system
