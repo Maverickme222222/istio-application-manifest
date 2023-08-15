@@ -1,4 +1,5 @@
-replicaCount: 5
+external-kyverno:
+  replicaCount: 5
 
-serviceMonitor:
-  enabled: true
+  serviceMonitor:
+    enabled: true
