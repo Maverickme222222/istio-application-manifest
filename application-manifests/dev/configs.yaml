@@ -7,3 +7,6 @@ services:
     - name: external-kyverno
       version: "3.0.5"
       destnamespace: kyverno
+    - name: external-istio
+      version: "3.0.5"
+      destnamespace: istio-systems
