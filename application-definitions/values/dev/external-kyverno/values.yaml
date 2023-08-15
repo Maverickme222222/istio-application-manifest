@@ -1,0 +1,4 @@
+replicaCount: 3
+
+serviceMonitor:
+  enabled: true
