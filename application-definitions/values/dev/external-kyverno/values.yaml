@@ -3,3 +3,4 @@ kyverno:
 
   serviceMonitor:
     enabled: true
+    namespace: prometheus
