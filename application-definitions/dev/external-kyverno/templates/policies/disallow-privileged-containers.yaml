@@ -24,11 +24,6 @@ spec:
               - Pod
             namespaces:
               - default
-      preconditions:
-        any:
-        - key: "istio-init"
-          operator: NotIn
-          value: {{ images.initContainers.*.name }}
       validate:
         message: >-
           Privileged mode is disallowed. The fields spec.containers[*].securityContext.privileged
