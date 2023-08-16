@@ -31,6 +31,8 @@ spec:
         server: https://kubernetes.default.svc
         namespace: '{{ .destnamespace }}'
       syncPolicy:
+        automated:
+          prune: true
         # Override sync policy to ensure ArgoCD can handle the very large CRD files
         # in the kube-prometheus-stack chart. See
         # https://argo-cd.readthedocs.io/en/release-2.4/user-guide/sync-options/#replace-resource-instead-of-applying-changes
