@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: applications
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+    - matrix:
+        generators:
+          # git generator, 'child' #1
+          - git:
+              repoURL: https://github.com/Maverickme222222/istio-application-manifest.git
+              revision: HEAD
+              files:
+              - path: application-manifests/dev/configs.yaml
+          # cluster generator, 'child' #2
+          - list:
+              elements: []
+              elementsYaml: "{{ .services.components | toJson }}"
+  template:
+    metadata:
+      name: 'dev-app-{{.name}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/Maverickme222222/istio-application-manifest.git
+        targetRevision: HEAD
+        path: 'application-definitions/{{ .environment }}/{{.name}}'
+        helm:
+          valueFiles:
+            - ../../values/{{ .environment }}/{{ .name }}/values.yaml
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{ .destnamespace }}'
+      syncPolicy:
+        # Override sync policy to ensure ArgoCD can handle the very large CRD files
+        # in the kube-prometheus-stack chart. See
+        # https://argo-cd.readthedocs.io/en/release-2.4/user-guide/sync-options/#replace-resource-instead-of-applying-changes
+        # for more details.
+        syncOptions:
+          # - Replace=true
+          - CreateNamespace=true
+          - ServerSideApply=true
