@@ -26,10 +26,7 @@ spec:
       source:
         repoURL: https://github.com/Maverickme222222/istio-application-manifest.git
         targetRevision: HEAD
-        path: 'application-definitions/{{ .environment }}/{{.name}}'
-        helm:
-          valueFiles:
-            - ../../values/{{ .environment }}/{{ .name }}/values.yaml
+        path: 'application-definitions/{{.name}}/overlays/{{ .environment }}'
       destination:
         server: https://kubernetes.default.svc
         namespace: '{{ .destnamespace }}'
