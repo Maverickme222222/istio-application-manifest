@@ -3,12 +3,16 @@ kind: Application
 metadata:
   name: dev-core-applications
   namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
     repoURL: https://github.com/Maverickme222222/istio-application-manifest.git
     path: application-manifests/core
     targetRevision: HEAD
+    plugin:
+      name: kustomized-helm
   destination:
     server: https://kubernetes.default.svc
     namespace: default

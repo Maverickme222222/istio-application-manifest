@@ -3,6 +3,8 @@ kind: ApplicationSet
 metadata:
   name: applications
   namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
 spec:
   goTemplate: true
   generators:
