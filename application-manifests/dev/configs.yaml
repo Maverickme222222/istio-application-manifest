@@ -1,6 +1,6 @@
 environment: dev
 services:
-  components:
-    - name: nginx
-      version: "3.0.5"
-      destnamespace: default
+  components: {}
+    # - name: nginx
+    #   version: "3.0.5"
+    #   destnamespace: default
