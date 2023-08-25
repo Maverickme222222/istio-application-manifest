@@ -29,8 +29,7 @@ spec:
         repoURL: https://github.com/Maverickme222222/istio-application-manifest.git
         targetRevision: HEAD
         path: 'application-definitions/{{.name}}/overlays/{{ .environment }}'
-        plugin:
-          name: kustomized-helm
+        plugin: {}
       destination:
         server: https://kubernetes.default.svc
         namespace: '{{ .destnamespace }}'
